@@ -121,12 +121,12 @@ export default {
             label: 'Bateria',
             img: 'aerogel.png',
             description: 'Material usado para alimentar equipamentos eletrônicos!',
-            price: 50,
+            price: 300,
             value: 5,
             amount: 0,
             upgrades: {
-              nanoGel: { label: 'Material ativo positivo', price: 150, description: 'Aumenta a eficiência da bateria em 1.5', value: 10, up: 10 },
-              plateNanoGel: { label: 'Placa de Nano-Gel', price: 300, description: 'Aumenta a eficiência do aerogel em 2', value: 12, up: 15 }
+              Placa: { label: 'Material ativo positivo', price: 150, description: 'Aumenta a eficiência da bateria em 10', value: 10, up: 10 },
+              PlacaCobre: { label: 'Placa de Cobre', price: 300, description: 'Aumenta a eficiência do bateria em 12', value: 12, up: 15 }
             }
           }
         }
@@ -145,9 +145,9 @@ export default {
   },
 
   mounted () {
-    if (localStorage.getItem('game')) {
+    if (localStorage.getItem('game-1.0')) {
       try {
-        this.game = JSON.parse(localStorage.getItem('game'))
+        this.game = JSON.parse(localStorage.getItem('game-1.0'))
       } catch (e) {
         localStorage.removeItem('game')
       }
@@ -206,12 +206,12 @@ export default {
     },
 
     resetGame () {
-      localStorage.removeItem('game')
+      localStorage.removeItem('game-1.0')
     },
 
     saveGame () {
       const parsed = JSON.stringify(this.game)
-      localStorage.setItem('game', parsed)
+      localStorage.setItem('game-1.0', parsed)
     }
   }
 }
