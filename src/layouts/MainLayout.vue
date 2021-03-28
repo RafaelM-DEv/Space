@@ -1,7 +1,7 @@
 <template>
   <q-layout view="lHh Lpr lFf">
     <q-header elevated>
-      <q-toolbar>
+      <q-toolbar style="display: none;">
         <q-btn
           flat
           dense
@@ -18,8 +18,9 @@
         <div>Quasar v{{ $q.version }}</div>
       </q-toolbar>
     </q-header>
-
+<!--
     <q-drawer
+      hidden
       v-model="leftDrawerOpen"
       show-if-above
       bordered
@@ -38,7 +39,7 @@
           v-bind="link"
         />
       </q-list>
-    </q-drawer>
+    </q-drawer> -->
 
     <q-page-container>
       <router-view />
@@ -47,7 +48,7 @@
 </template>
 
 <script>
-import EssentialLink from 'components/EssentialLink.vue'
+// import EssentialLink from 'components/EssentialLink.vue'
 
 const linksData = [
   {
@@ -96,7 +97,7 @@ const linksData = [
 
 export default {
   name: 'MainLayout',
-  components: { EssentialLink },
+  // components: { EssentialLink },
   data () {
     return {
       leftDrawerOpen: false,
