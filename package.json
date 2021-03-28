@@ -19,7 +19,8 @@
     "pixel-borders": "^1.1.4",
     "push-dir": "^0.4.1",
     "quasar": "^1.0.0",
-    "vue-i18n": "^8.0.0"
+    "vue-i18n": "^8.0.0",
+    "vue-reactive-storage": "git+https://github.com/ropbla9/vue-reactive-storage.git"
   },
   "devDependencies": {
     "@quasar/app": "^2.0.0",
