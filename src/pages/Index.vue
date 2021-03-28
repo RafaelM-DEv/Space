@@ -122,11 +122,11 @@ export default {
             img: 'aerogel.png',
             description: 'Material usado para alimentar equipamentos eletrônicos!',
             price: 50,
-            value: 1.5,
+            value: 5,
             amount: 0,
             upgrades: {
-              nanoGel: { label: 'Material ativo positivo', price: 50, description: 'Aumenta a eficiência da bateria em 1.5', value: 1.5, up: 1 },
-              plateNanoGel: { label: 'Placa de Nano-Gel', price: 200, description: 'Aumenta a eficiência do aerogel em 2', value: 2, up: 3 }
+              nanoGel: { label: 'Material ativo positivo', price: 150, description: 'Aumenta a eficiência da bateria em 1.5', value: 10, up: 10 },
+              plateNanoGel: { label: 'Placa de Nano-Gel', price: 300, description: 'Aumenta a eficiência do aerogel em 2', value: 12, up: 15 }
             }
           }
         }
