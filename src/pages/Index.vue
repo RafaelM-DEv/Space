@@ -2,20 +2,17 @@
   <q-page class="q-ma-sm">
     <!-- header menu -->
     <!-- TODO Criar nome do jogo como titulo -->
-    <!-- <div class="fit q-mt-md">
+    <div class="fit q-mt-md">
       <q-btn color="cyan" label="menu">
         <q-menu>
          <q-list>
-            <q-item clickable v-ripple>
+            <q-item clickable v-ripple @click="resetGame">
                <q-item-section>Reset</q-item-section>
-            </q-item>
-            <q-item clickable v-ripple>
-               <q-item-section>Ajuda</q-item-section>
             </q-item>
            </q-list>
         </q-menu>
       </q-btn>
-    </div> -->
+    </div>
 
     <div class="flex">
       <!-- star-dust -->
@@ -265,6 +262,7 @@ export default {
 
     resetGame () {
       localStorage.removeItem('game-1.0')
+      this.$router.go(this.$router.currentRoute)
     },
 
     saveGame () {
