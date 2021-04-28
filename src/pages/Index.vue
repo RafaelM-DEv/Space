@@ -152,7 +152,7 @@ export default {
             label: 'Bateria',
             img: 'https://www.flaticon.com/premium-icon/icons/svg/2333/2333603.svg',
             description: 'Material usado para alimentar equipamentos eletrônicos!',
-            price: 50,
+            price: 150,
             value: 5,
             amount: 0,
             unlocked: 4
@@ -162,10 +162,10 @@ export default {
             label: 'Scanner',
             img: 'https://www.flaticon.com/premium-icon/icons/svg/3270/3270577.svg',
             description: 'Material usado para escanear asteroids',
-            price: 100,
-            value: 5,
+            price: 200,
+            value: 8,
             amount: 0,
-            unlocked: 7
+            unlocked: 10
           }
         }
       }
