@@ -281,7 +281,7 @@ export default {
 @import "node_modules/pixel-borders/src/styles/pixel-borders.scss";
 
 .starship {
-  width: 300px;
+  width: 100%;
 
   &__item-description {
     color: $dark;
