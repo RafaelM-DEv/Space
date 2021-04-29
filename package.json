@@ -2,7 +2,7 @@
   "name": "space-clicker",
   "version": "0.0.1",
   "description": "Um jogo com o objetivo de conseguir acumular poeira cosmica para desenvolvimento de tecnologias espaciais! ",
-  "productName": "Quasar App",
+  "productName": "Space Clicker",
   "author": "Rafael Martins de Castro <42079080+Far3llProject@users.noreply.github.com>",
   "private": true,
   "scripts": {

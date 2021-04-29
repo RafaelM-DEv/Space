@@ -1,6 +1,5 @@
 <template>
   <q-page class="q-pa-sm page font">
-
     <div class="fit q-mt-sm justify-center flex">
       <q-btn color="warning" label="opções" :class="isMobileOptions" @click="toggleDialog" />
       <q-dialog v-model="dialog">
@@ -10,9 +9,33 @@
             <q-btn label="Reset" @click="resetGame" style="min-width: 120px;" color="negative" />
           </div>
           <div>
-            <q-btn label="ajuda"  style="min-width: 120px;"/>
+            <q-btn label="ajuda" style="min-width: 120px;"/>
           </div>
         </q-card-section>
+      </q-card>
+    </q-dialog>
+    <!-- avisos -->
+    <q-dialog v-model="game.info">
+      <q-card style="min-width: 100px;" class="flex justify-center">
+        <q-card-section class="column q-gutter-y-md">
+          <q-icon name="img:https://www.flaticon.com/br/premium-icon/icons/svg/3065/3065715.svg"  size="50px"/>
+          Olá, meu nome é Rafael e primeiramente desculpa pelos dados cosmicos perdidos estou trabalhando incansalvelmente para chegar a um produto final e você claro é um TESTER, TESTERS são muitos
+          importantes no desenvolvimento de um produto sabia? são eles que enchem minha caixa de emails com feedbacks que fazem o produto ser Melhor! vou deixar anotado aqui o que mudei ok!
+
+          <div>
+            Update log
+            <p>Novo item "Garra" para ajudar no inicio do jogo</p>
+            <p>Botão de update ( Ainda estou desenvolvendo eles ok? )</p>
+            <p>Ganho por click vai poder ser melhorado ( ainda estou fazendo ok? )</p>
+
+          </div>
+        </q-card-section>
+
+        <q-card-action>
+          <div class="q-mb-md">
+            <q-btn label="ok" @click="close()" class="bg-warning" />
+          </div>
+        </q-card-action>
       </q-card>
     </q-dialog>
     </div>
@@ -24,12 +47,13 @@
           <q-btn outline flat size="15px" :label="game.starCompanyName" @click="starCompany"/>
         </div>
         <div class="column items-center q-mb-md">
-          <div style="font-size: 11px;">
+          <div style="font-size: 12px;">
             Poeira Cosmica: {{ Math.round(cosmicDustCount) }}
           </div>
           <div style="font-size: 10px;">Por segundo: {{ game.cosmicDustPerSecond }}</div>
+          <div class="q-mt-sm" style="font-size: 9px;">Ganho por click: {{ game.click }}</div>
         </div>
-        <div class="justify-center flex">
+        <div class="justify-center flex ">
           <q-btn icon="ion-rocket" color="deep-purple-6" round glossy @click="getDust()" size="50px"/>
         </div>
         <q-separator class="q-mt-lg" color="black" size="5px" />
@@ -40,7 +64,14 @@
           <q-list v-for="(item, index) in game.itemsBuyed " :key="index">
             <q-item>
               <q-item-section>
-                {{ item }}
+                <div class="flex justify-between">
+                  <div class="q-mt-xs">
+                  {{ item.label }}
+                  </div>
+                  <div>
+                    <q-btn label="upgrade" />
+                  </div>
+                </div>
               </q-item-section>
             </q-item>
           </q-list>
@@ -75,28 +106,6 @@
           </q-item>
         </q-list>
       </div>
-
-      <!-- upgrades -->
-      <!-- <div class="q-mt-md q-ml-md bg-grey-2 starship pixel-borders--1 ">
-        <q-list bordered separator class="starship__item-list">
-          <div class="flex justify-center">
-              Upgrades
-          </div>
-          <q-item>
-            <q-item-section>
-              <q-list bordered separator class="starship__item-update">
-                <q-item v-for="(upgrade, index) in game.upgrades" :key="index" clickable @click="buyUpgrade(upgrade, index)">
-                  <q-item-section>
-                    <div>{{ upgrade.label }} </div>
-                    <div>{{upgrade.description}}</div>
-                    <div>Preço: {{ upgrade.price }} </div>
-                  </q-item-section>
-                </q-item>
-              </q-list>
-            </q-item-section>
-          </q-item>
-        </q-list>
-      </div> -->
     </div>
 
     <!-- company name dialog -->
@@ -125,18 +134,24 @@ export default {
       setName: false,
       cosmicDustCount: 0,
       game: {
+        info: true,
+        click: 1,
         openShop: 0,
         starCompanyName: 'Nome da Companhia estelar',
         cosmicDust: 0,
         cosmicDustPerSecond: 0,
-        // upgrades: [
-        //   { label: 'Nano-Gel', price: 50, description: 'Aumenta a eficiência do aerogel em 1.5', value: 1.5, up: 1 },
-        //   { label: 'Placa de Nano-Gel', price: 200, description: 'Aumenta a eficiência do aerogel em 2', value: 2, up: 3 },
-        //   { label: 'Material ativo positivo', price: 150, description: 'Aumenta a eficiência da bateria em 10', value: 10, up: 10 },
-        //   { label: 'Placa de Cobre', price: 300, description: 'Aumenta a eficiência do bateria em 12', value: 12, up: 15 }
-        // ],
         itemsBuyed: [],
         items: {
+          Garra: {
+            id: 3,
+            label: 'Garra',
+            img: 'https://www.flaticon.com/br/premium-icon/icons/svg/3936/3936056.svg',
+            description: 'Ferramenta para ajudar na coleta de detritos',
+            price: 20,
+            value: 1,
+            amount: 0,
+            unlocked: 0
+          },
           aerogel: {
             id: 1,
             label: 'Aerogel',
@@ -145,7 +160,7 @@ export default {
             price: 30,
             value: 2,
             amount: 0,
-            unlocked: 0
+            unlocked: 2
           },
           batery: {
             id: 2,
@@ -161,7 +176,7 @@ export default {
             id: 3,
             label: 'Scanner',
             img: 'https://www.flaticon.com/premium-icon/icons/svg/3270/3270577.svg',
-            description: 'Material usado para escanear asteroids',
+            description: 'Material usado para scanear asteroids',
             price: 200,
             value: 10,
             amount: 0,
@@ -193,14 +208,24 @@ export default {
   },
 
   mounted () {
-    if (localStorage.getItem('game-1.0')) {
+    if (localStorage.getItem('game-1.1')) {
       try {
-        this.game = JSON.parse(localStorage.getItem('game-1.0'))
+        this.game = JSON.parse(localStorage.getItem('game-1.1'))
       } catch (e) {
-        localStorage.removeItem('game')
+        localStorage.removeItem('game-1.0')
       }
+    } else {
+      localStorage.removeItem('game-1.0')
+      this.saveGame()
     }
   },
+
+  // meta () {
+  //   return {
+  //     title: JSON.stringify(this.cosmicDustCount)
+  //     // titleTemplate: title => `${title} - Space Clicker`
+  //   }
+  // },
 
   watch: {
     animatedNumber (newValue) {
@@ -213,15 +238,6 @@ export default {
   },
 
   methods: {
-    // addAvaliableUpdate () {
-    //   for (const key in this.game.items) {
-    //     for (const item in this.game.items[key].upgrades) {
-    //       if (this.game.items[key].amount === this.game.items[key].upgrades[item].up) {
-    //         this.game.avaliableUpdate.push(this.game.items[key].upgrades[item])
-    //       }
-    //     }
-    //   }
-    // },
     toggleDialog () {
       this.dialog = !this.dialog
     },
@@ -234,7 +250,7 @@ export default {
         model.price += model.price * 0.2 // aumenta o valor do item apos comprado
 
         if (model.amount === 0) {
-          this.game.itemsBuyed.push(model.label)
+          this.game.itemsBuyed.push(model)
         }
 
         model.amount += 1 // adiciona quanditdade de items comprados
@@ -249,21 +265,17 @@ export default {
       }
     },
 
-    // buyUpgrade (model, index) {
-    //   console.log(index)
-    //   if (this.game.cosmicDust >= model.price) {
-    //     this.game.cosmicDust -= model.price
-    //     this.game.cosmicDustPerSecond += model.value
-    //     this.game.upgrades.splice(index, 1)
-    //   }
-    // },
+    close () {
+      this.saveGame()
+      this.game.info = false
+    },
 
     starCompany () {
       this.setName = !this.setName
     },
 
     getDust () {
-      this.game.cosmicDust++
+      this.game.cosmicDust += this.game.click
     },
 
     getDustperSecond () {
@@ -273,14 +285,14 @@ export default {
     },
 
     resetGame () {
-      localStorage.removeItem('game-1.0')
+      localStorage.removeItem('game-1.1')
       this.$router.go(this.$router.currentRoute)
     },
 
     saveGame () {
       setInterval(() => {
         const parsed = JSON.stringify(this.game)
-        localStorage.setItem('game-1.0', parsed)
+        localStorage.setItem('game-1.1', parsed)
       }, 10000)
     }
   }
@@ -295,6 +307,7 @@ export default {
 }
 
 .starshipDesktop {
+  background-image: url('https://gifimage.net/wp-content/uploads/2018/11/pixel-gif-stars-1.gif');
   width: 400px;
   background-color: #556779;
 
@@ -305,7 +318,8 @@ export default {
 
 .starship {
   width: 100%;
-  background-color: #556779;
+  background-image: url('https://gifimage.net/wp-content/uploads/2018/11/pixel-gif-stars-1.gif');
+  // background-color: #556779;
 
   &__item-description {
     text-align: center;
@@ -322,7 +336,7 @@ export default {
   }
 
   &__item-list {
-    // margin: 3px 3px 3px 3px;
+    border-radius: 0.5rem;
     border-style: solid;
     border-color: rgb(0, 0, 0);
     background: #556779;
