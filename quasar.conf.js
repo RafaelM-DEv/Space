@@ -99,7 +99,8 @@ module.exports = function (/* ctx */) {
 
       // Quasar plugins
       plugins: [
-        'Meta'
+        'Meta',
+        'Notify'
       ]
     },
 
