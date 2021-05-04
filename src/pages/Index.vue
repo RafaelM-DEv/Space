@@ -11,6 +11,9 @@
           <div>
             <q-btn label="contato" style="min-width: 120px;" @click="contact = true"/>
           </div>
+          <div>
+            <q-btn label="Music" @click="musicStart()"/>
+          </div>
         </q-card-section>
       </q-card>
     </q-dialog>
@@ -56,22 +59,28 @@
         </div>
         <div class="column items-center q-mb-md">
           <div style="font-size: 12px;">
-            Poeira Cosmica: {{ Math.round(cosmicDustCount) }}
+            Poeira Cósmica: {{ Math.round(cosmicDustCount) }}
           </div>
           <div style="font-size: 10px;">Por segundo: {{ game.cosmicDustPerSecond }}</div>
           <div class="q-mt-sm" style="font-size: 9px;">Ganho por click: {{ game.click }}</div>
         </div>
+
         <!-- get dust -->
-        <div class="justify-center flex ">
-          <q-btn icon="img:https://i.gifer.com/origin/24/2432cf5ff737ad7d1794a29d042eb02e_w200.webp" color="warning" round glossy @click="getDust()" size="50px"/>
+        <div class="justify-center flex">
+          <q-icon v-if="droneSend" name="img:https://cdna.artstation.com/p/assets/images/images/025/411/868/original/tomas-sousa-drone1.gif?1585708550" size="50px" style="position: absolute;"/>
+          <div v-if="game.cosmicDust === 0" class="text-black q-px-sm" style="position: absolute; font-size: 10px; background-color: white; width: 290px;">Clique na nave para pegar poeira cósmica...</div>
+          <q-btn icon="img:https://i.gifer.com/origin/24/2432cf5ff737ad7d1794a29d042eb02e_w200.webp" flat round @click="getDust()" size="60px"/>
         </div>
 
+        <q-separator class="q-mt-md" color="black" size="3px" />
           <!-- enviar drone -->
-          <!-- o drone aumenta o ganho de poeira por um periodo de tempo -->
-        <!-- <div class="q-ml-sm q-mt-md" style="font-size: 10px;">
-          <q-btn icon="img:https://www.flaticon.com/premium-icon/icons/svg/3342/3342018.svg" class="bg-red" glossy round size="12px" @click="drone()"/>
-          Enviar drone time:12:00
-        </div> -->
+        <div class="q-mt-md flex justify-center" style="font-size: 12px;">
+          Equipamentos
+        </div>
+        <div class="q-ml-sm q-mt-lg justify-between flex " style="font-size: 10px;">
+          <q-btn icon="img:https://www.flaticon.com/premium-icon/icons/svg/4014/4014313.svg" :class="colorDrone" :label="labelDrone" size="12px" :disable="droneSend" @click="drone()"/>
+          <q-btn outline :label="timer" size="12px"/>
+        </div>
 
         <q-separator class="q-mt-md" color="black" size="3px" />
 
@@ -92,7 +101,7 @@
                     </div>
                   </div>
                   <div>
-                    <q-btn label="upgrade" @click="upgrade(item)" size="10px"/>
+                    <q-btn label="upgrade" color="blue" @click="upgrade(item)" size="10px"/>
                   </div>
                 </div>
               </q-item-section>
@@ -211,6 +220,12 @@
         </q-card-actions>
         </q-card>
     </q-dialog>
+    <div class="flex justify-center fit q-mt-lg">
+      <div class="text-white" style="font-size: 10px">
+        Rafael Martins - <a target="_blank" style="text-decoration: none; color: yellow" href="https://github.com/RafaelM-DEv">https://github.com/RafaelM-DEv</a>
+      </div>
+      <!-- <q-img src="../assets/quasar-logo-full.svg"/> -->
+    </div>
   </q-page>
 </template>
 
@@ -221,6 +236,12 @@ import { copyToClipboard } from 'quasar'
 export default {
   data () {
     return {
+      labelDrone: 'Enviar Drone',
+      colorDrone: 'bg-green',
+      droneSend: false,
+      version: '1.2.2',
+      oldVersion: '1.2.1',
+      timer: 0,
       contact: false,
       upgradeDialog: false,
       dialog: false,
@@ -330,6 +351,18 @@ export default {
             unlocked: 10,
             ups: 0,
             totalEfficiency: 0
+          },
+          drone: {
+            id: 5,
+            label: 'drone',
+            img: 'https://www.flaticon.com/premium-icon/icons/svg/4014/4014313.svg',
+            description: 'Tecnologia usada para busca de e Coleta de Poeira Cósmica',
+            price: 500,
+            value: 10,
+            amount: 0,
+            unlocked: 20,
+            ups: 0,
+            totalEfficiency: 0
           }
         }
       }
@@ -357,14 +390,19 @@ export default {
   },
 
   mounted () {
-    if (localStorage.getItem('game-1.2.0')) {
+    // audio an sond efects
+    // const backgroundMusic = new Audio('../assets/Automation.mp3')
+    // backgroundMusic.play()
+
+    if (localStorage.getItem(this.version)) {
       try {
-        this.game = JSON.parse(localStorage.getItem('game-1.2.0'))
+        this.game = JSON.parse(localStorage.getItem(this.version))
       } catch (e) {
-        localStorage.removeItem('game-1.2.0')
+        // localStorage.removeItem('game-1.2.0')
+        console.log(e)
       }
     } else {
-      localStorage.removeItem('game-1.2')
+      localStorage.removeItem(this.oldVersion)
       this.saveGame()
     }
   },
@@ -387,6 +425,11 @@ export default {
   },
 
   methods: {
+    musicStart () {
+      const backgroundMusic = new Audio('../assets/Automation.mp3')
+      backgroundMusic.play()
+    },
+
     copy (text) {
       copyToClipboard('far3ll.274@gmail.com')
         .then(() => {
@@ -399,8 +442,55 @@ export default {
         })
     },
 
+    time () {
+      const start = new Date().getTime()
+      console.log(start)
+    },
+
+    timeDisable () {
+      // 2 min
+      setTimeout(() => {
+
+      }, 10000)
+    },
+
+    // TODO colocar no drone o tempo
+    // TODO colocar o drone para recarregar
+    // TODO arrumar o tempo e criar uma condição para o setTimeout
     drone () {
-      console.log('enviado')
+      this.labelDrone = 'Enviado...'
+      this.colorDrone = 'bg-blue'
+      this.droneSend = true
+      this.game.cosmicDustPerSecond += 50
+      this.timer = 3
+
+      const timeCont = setInterval(() => {
+        this.timer -= 1
+
+        if (this.timer === 0) {
+          clearInterval(timeCont)
+          this.game.cosmicDustPerSecond -= 50
+
+          // Recarregando
+
+          this.labelDrone = 'Recarregando'
+          this.colorDrone = 'bg-orange text-bold'
+          this.droneSend = true
+          this.timer = 5
+
+          const timerRecharger = setInterval(() => {
+            this.timer -= 1
+
+            // disponivel
+            if (this.timer === 0) {
+              clearInterval(timerRecharger)
+              this.labelDrone = 'Enviar Drone'
+              this.colorDrone = 'bg-green'
+              this.droneSend = false
+            }
+          }, 1000)
+        }
+      }, 1000)
     },
 
     add (model) {
@@ -416,14 +506,14 @@ export default {
               this.game.cosmicDust -= model.price
               this.game.click += model.value
 
-              model.price += model.price * 0.2
+              model.price += model.price * 0.1
               model.value += 0.5
 
               this.add(model)
             }
             if (model.label === 'Garra Pro') {
               this.game.cosmicDust -= model.price
-              model.price += model.price * 0.2
+              model.price += model.price * 0.1
 
               this.game.items[model.uplink].value += model.value
 
@@ -436,10 +526,9 @@ export default {
             this.game.cosmicDust -= model.price
 
             this.game.items[model.uplink].value += model.value
-            model.price += model.price * 0.4
+            model.price += model.price * 0.1
 
             this.add(model)
-            // this.game.items[model.uplink].ups++
           }
           break
         case 3:
@@ -448,7 +537,7 @@ export default {
 
             this.game.items[model.uplink].value += model.value
 
-            model.price += model.price * 0.4
+            model.price += model.price * 0.1
 
             this.add(model)
           }
@@ -459,7 +548,7 @@ export default {
 
             this.game.items[model.uplink].value += model.value
 
-            model.price += model.price * 0.4
+            model.price += model.price * 0.1
 
             this.add(model)
           }
@@ -520,14 +609,14 @@ export default {
     },
 
     resetGame () {
-      localStorage.removeItem('game-1.2.0')
+      localStorage.removeItem(this.version)
       this.$router.go(this.$router.currentRoute)
     },
 
     saveGame () {
       setInterval(() => {
         const parsed = JSON.stringify(this.game)
-        localStorage.setItem('game-1.2.0', parsed)
+        localStorage.setItem(this.version, parsed)
       }, 1000)
     }
   }
