@@ -42,7 +42,7 @@
       </q-card>
     </q-dialog>
     <!-- avisos -->
-    <q-dialog v-model="game.info">
+    <q-dialog v-model="game.info" :maximized="isMobileMaximized">
       <q-card style="min-width: 100px;" class="flex justify-center  pixel-borders--1">
         <q-card-section class="column q-gutter-y-sm">
           <q-icon name="img:https://i.pinimg.com/originals/45/1a/27/451a27df78f84c8f671ec1e502a4fe97.gif" class="flex self-center robot"/>
@@ -97,13 +97,29 @@
 
         <q-separator class="q-mt-md" color="black" size="3px" />
 
-          <!-- enviar drone -->
+          <!-- Equipamentos -->
         <div class="q-mt-md flex justify-center" style="font-size: 12px;">
           Equipamentos
         </div>
-        <div v-if="game.installDrone" class="q-ml-sm q-mt-lg justify-between flex " style="font-size: 10px;">
+
+        <!-- DRONE -->
+        <div v-if="game.installDrone" class="q-ml-sm q-mt-lg justify-between flex" style="font-size: 10px;">
           <q-btn icon="img:https://www.flaticon.com/premium-icon/icons/svg/4014/4014313.svg" :class="colorDrone" :label="labelDrone" size="12px" :disable="droneSend" @click="drone()"/>
           <q-btn outline :label="timer" size="12px"/>
+        </div>
+        <div v-if="game.installDrone" class="q-mt-sm q-ml-sm " style="font-size: 8px;">
+          <div class="flex justify-between">
+            <div>Capacidade de Coleta do drone</div>
+            <div>{{ game.items.drone.launchValue }}/s</div>
+          </div>
+          <div class="flex justify-between">
+            <div>Tempo de lançamento</div>
+            <div>{{ game.items.drone.batery }}s</div>
+          </div>
+          <div class="flex justify-between">
+            <div>Tempo de recarga</div>
+            <div>{{ game.items.drone.bateryRecover }}s</div>
+          </div>
         </div>
 
         <q-separator class="q-mt-md" color="black" size="3px" />
@@ -132,27 +148,40 @@
       </div>
 
       <!-- upgrade modal list -->
-      <q-dialog v-model="upgradeDialog" >
-        <q-card style="width: 400px; border-radius: 5px;">
+      <q-dialog v-model="upgradeDialog" :maximized="isMobileMaximized">
+        <q-card class="upgradeDialog">
+
+          <q-card-actions class="flex">
+            <div class="fit">
+              <q-btn v-close-popup color="warning" label="fechar" class="fit font" size="12px" />
+            </div>
+          </q-card-actions>
+
           <q-card-section class="q-ma-none q-pa-sm">
             <q-list v-for="(update, index) in upgradesList" :key="index">
-              <div class="devDialog font pixel-borders--1 q-my-xs">
-                <div class="flex justify-center">
-                  <div class="row starship__items fit justify-center q-mb-sm">
-                  <!-- <img :src="require(`../assets/${item.img}`)"> -->
-                    <img :src="update.img" style="width: 30px; height: 30px;">
-                    <div class="self-center q-ml-sm text-capitalize" style="font-size: 8px;">{{ update.label }}</div>
+              <div class="devDialog font pixel-borders--1 q-my-xs upgradeDialog__item">
+                <div class="flex justify-between no-wrap">
+                  <div class="column starship__items q-mb-sm q-ml-sm" style="max-width: 80px ">
+                    <div>
+                      <img :src="update.img" style="width: 30px; height: 30px;">
+                    </div>
+                    <div class="text-capitalize" style="font-size: 8px;">{{ update.label }}</div>
                   </div>
-                  <div class="flex text-right">
-                    <div style="font-size: 8px;" class="q-ml-md" >
+                  <div class="column text-right q-mt-md">
+                    <div>
                        Preço: {{  Math.round(update.price) }}
                       <q-img src="../assets/cosmic.png" style="width: 10px" class="q-mb-xs"/>
                     </div>
-                    <div style="font-size: 8px;" class="q-ml-lg" >Eficiência: {{ update.value }}/s</div>
+                    <div  v-if="update.idu !== 5" >Eficiência: +{{ update.value }}</div>
+                    <div  v-if="update.label === 'Drone Pro'">Eficiência: +{{ update.value }}</div>
+                    <!-- drone -->
+                    <div v-if="update.label === 'Drone Sentinela'" >Coleta de Poeira: +{{ update.value }}</div>
+                    <div v-if="update.label === 'Bateria de Drone'" >Coleta: +2s</div>
+                    <div v-if="update.label === 'Bateria de Drone'" >Recarga: +1s</div>
                   </div>
                 </div>
                 <div class="q-px-md q-mt-sm starship__item-description" style="font-size: 8px;">{{ update.description }}</div>
-                <q-btn label="comprar" size="15px" push color="green" class="q-mt-md fit" @click="buyUpgrade(update)" />
+                <q-btn label="comprar" size="15px" push color="green" :disable="game.cosmicDust < update.price" class="q-mt-md fit" @click="buyUpgrade(update)" />
               </div>
             </q-list>
           </q-card-section>
@@ -179,13 +208,13 @@
                     <q-img src="../assets/cosmic.png" style="width: 14px" class="q-mb-xs"/>
                   </div>
                   <div>Eficiência: {{ item.value }}/s</div>
-                  <div>Total: {{ item.totalEfficiency }}/s</div>
+                  <div mask="#.##">Total: {{ item.totalEfficiency.toFixed(1) }}/s</div>
                 </div>
               </div>
               <div class="self-end q-mb-xs">Compradas: {{ item.amount }} unidades</div>
               <div class="q-px-md starship__item-description">{{ item.description }}</div>
 
-              <q-btn label="comprar" size="15px" push color="green" :disable="game.openShop <= item.unlocked" class="q-mt-md" @click="buyItem(item)" />
+              <q-btn label="comprar" size="15px" push color="green" :disable="game.cosmicDust < item.price" class="q-mt-md" @click="buyItem(item)" />
 
             </q-item-section>
           </q-item>
@@ -281,7 +310,7 @@ export default {
         click: 1,
         openShop: 0,
         starCompanyName: 'Nome da Companhia',
-        cosmicDust: 0,
+        cosmicDust: 100000,
         cosmicDustPerSecond: 0,
         itemsBuyed: [],
         achievementsList: {
@@ -305,14 +334,14 @@ export default {
           },
           cosmicDust: {
             id: 4,
-            label: '1k de Poeira não é o bastante!',
-            description: 'Conquistado apos conseguir 1k de poeira cósmica, espero que não seja o bastante pra você.',
+            label: '10k de Poeira não é o bastante!',
+            description: 'Conquistado apos conseguir 10k de poeira cósmica, espero que não seja o bastante pra você.',
             conquest: false
           },
           cosmicDustPerSecond: {
             id: 5,
             label: 'Vamos automatizar Tudo!',
-            description: 'Conquistado ao atingir 1k de poeira por segundo.',
+            description: 'Comprado um scane.',
             conquest: false
           },
           droneAchiev: {
@@ -328,8 +357,8 @@ export default {
             uplink: 'garra',
             label: 'Click Pro',
             img: 'https://www.flaticon.com/premium-icon/icons/svg/2725/2725783.svg',
-            price: 200,
-            value: 1,
+            price: 100,
+            value: 0.5,
             description: 'Aumenta o ganho do click.'
           },
           {
@@ -337,9 +366,9 @@ export default {
             uplink: 'garra',
             label: 'Garra Pro',
             img: 'https://www.flaticon.com/br/premium-icon/icons/svg/3936/3936056.svg',
-            price: 100,
-            value: 1,
-            description: 'Aumenta eficiência da Garra'
+            price: 200,
+            value: 0.5,
+            description: 'Aumenta eficiência da Garra.'
           },
           {
             idu: 2,
@@ -354,7 +383,7 @@ export default {
             idu: 3,
             uplink: 'batery',
             label: 'Bateria Pro',
-            img: 'https://www.flaticon.com/premium-icon/icons/svg/2333/2333603.svg',
+            img: 'https://www.flaticon.com/premium-icon/icons/svg/3804/3804975.svg',
             price: 3000,
             value: 3,
             description: 'Aumenta o eficiência da bateria em +3'
@@ -385,6 +414,15 @@ export default {
             price: 8000,
             value: 5,
             description: 'Aumenta o a capacidade de coleta do drone lançado em +5'
+          },
+          {
+            idu: 5,
+            uplink: 'drone',
+            label: 'Bateria de Drone',
+            img: 'https://www.flaticon.com/premium-icon/icons/svg/4014/4014313.svg',
+            price: 10000,
+            value: 2,
+            description: 'Aumenta o tempo de coleta do drone lançado em +2 e o tempo de recarga em +1.'
           }
         ],
         items: {
@@ -394,7 +432,7 @@ export default {
             img: 'https://www.flaticon.com/br/premium-icon/icons/svg/3936/3936056.svg',
             description: 'Ferramenta para ajudar na coleta de detritos.',
             price: 50,
-            value: 1,
+            value: 0.1,
             amount: 0,
             unlocked: 0,
             ups: 0,
@@ -417,7 +455,7 @@ export default {
             label: 'batery',
             img: 'https://www.flaticon.com/premium-icon/icons/svg/2333/2333603.svg',
             description: 'Material usado para alimentar equipamentos eletrônicos.',
-            price: 150,
+            price: 1150,
             value: 5,
             amount: 0,
             unlocked: 4,
@@ -441,9 +479,11 @@ export default {
             label: 'drone',
             img: 'https://www.flaticon.com/premium-icon/icons/svg/4014/4014313.svg',
             description: 'Drone pode ser lançado para coletar poeira cósmica.',
-            price: 1500,
+            price: 2000,
             value: 10,
-            launchValue: 10,
+            batery: 10,
+            bateryRecover: 30,
+            launchValue: 10, // capacidade de coleta
             amount: 0,
             unlocked: 20,
             ups: 0,
@@ -474,8 +514,13 @@ export default {
   },
 
   computed: {
+
     animatedNumber () {
       return this.game.cosmicDust.toFixed(0)
+    },
+
+    isMobileMaximized () {
+      return this.$q.screen.lt.sm
     },
 
     isMobile () {
@@ -577,7 +622,7 @@ export default {
       this.colorDrone = 'bg-blue'
       this.droneSend = true
       this.game.cosmicDustPerSecond += this.game.items.drone.launchValue
-      this.timer = 5 // tempo lançado
+      this.timer = this.game.items.drone.batery // tempo lançado
       const som = new Audio('http://soundimage.org/wp-content/uploads/2016/04/PowerUp28.mp3')
       som.play()
 
@@ -592,7 +637,7 @@ export default {
           this.labelDrone = 'Recarregando'
           this.colorDrone = 'bg-orange text-bold'
           this.droneSend = true
-          this.timer = 30 // tempo recarregando
+          this.timer = this.game.items.drone.bateryRecover // tempo recarregando
 
           const timerRecharger = setInterval(() => {
             this.timer -= 1
@@ -621,20 +666,29 @@ export default {
               this.game.cosmicDust -= model.price
               this.game.click += model.value
 
-              model.price += model.price * 0.1
+              model.price += model.price * 0.2
               model.value += 0.5
 
               this.addInstallCountItem(model)
             }
             if (model.label === 'Garra Pro') {
               this.game.cosmicDust -= model.price
-              model.price += model.price * 0.1
+              model.price += model.price * 0.5
 
               this.game.items[model.uplink].value += model.value
 
               this.addInstallCountItem(model)
             }
           }
+          this.$q.notify({
+            message: '<strong>upgrade comprado</strong>',
+            multiLine: true,
+            html: true,
+            timeout: 6000,
+            progress: true,
+            icon: 'img:https://www.flaticon.com/premium-icon/icons/svg/4680/4680441.svg',
+            color: 'blue'
+          })
           break
         case 2:
           if (this.game.cosmicDust >= model.price) {
@@ -677,6 +731,11 @@ export default {
             }
             if (model.label === 'Drone Sentinela') {
               this.game.items.drone.launchValue += model.value
+              model.price += model.price * 0.1
+            }
+            if (model.label === 'Bateria de Drone') {
+              this.game.items.drone.batery += model.value
+              this.game.items.drone.bateryRecover += 1
               model.price += model.price * 0.1
             }
             this.addInstallCountItem(model)
@@ -757,6 +816,19 @@ export default {
 
 <style lang="scss">
 @import "node_modules/pixel-borders/src/styles/pixel-borders.scss";
+
+.upgradeDialog {
+  background-image: url('https://i.pinimg.com/originals/2d/3c/85/2d3c85f4fae58e749ba5b0d22521fe3d.gif');
+  background-repeat: no-repeat;
+  background-size: cover;
+  border-radius: 5px;
+  min-height: 500px;
+  width: 400px;
+
+  &__item {
+    background:rgba($color: #fff, $alpha: 0.7);
+  }
+}
 
 .achive {
   background-image: url('https://i.pinimg.com/564x/b1/bd/c1/b1bdc1ae539dcbd1a7c33cef3e5f2d9a.jpg');

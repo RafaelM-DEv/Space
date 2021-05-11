@@ -1,21 +1,12 @@
 <template>
-  <q-layout view="lHh Lpr lFf">
-    <q-header elevated>
-      <q-toolbar style="display: none;">
-        <q-btn
-          flat
-          dense
-          round
-          icon="menu"
-          aria-label="Menu"
-          @click="leftDrawerOpen = !leftDrawerOpen"
-        />
+  <q-layout view="lHh Lpr lFf" >
+    <q-header elevated style="display: none;" >
+      <q-toolbar class="font">
 
-        <q-toolbar-title>
-          Space Clicker
+        <q-toolbar-title style="font-size: 10px;">
+         Poeira Cósmica:  {{ Math.round( cosmicDustCount) }}
         </q-toolbar-title>
 
-        <div>Quasar v{{ $q.version }}</div>
       </q-toolbar>
     </q-header>
 <!--
@@ -42,12 +33,15 @@
     </q-drawer> -->
 
     <q-page-container>
+
       <router-view />
     </q-page-container>
   </q-layout>
 </template>
 
 <script>
+import Vue from 'vue'
+import gsap from 'gsap'
 // import EssentialLink from 'components/EssentialLink.vue'
 
 const linksData = [
@@ -100,9 +94,50 @@ export default {
   // components: { EssentialLink },
   data () {
     return {
+      dust: Vue.prototype.$cosmicDust,
+      cosmicDustCount: 0,
       leftDrawerOpen: false,
-      essentialLinks: linksData
+      essentialLinks: linksData,
+      version: '1.2.3',
+      game: {
+        cosmicDust: 0
+      }
+    }
+  },
+  computed: {
+    animatedNumber () {
+      return this.game.cosmicDust
+    }
+  },
+
+  watch: {
+    animatedNumber (newValue) {
+      gsap.to(this.$data, { duration: 1.8, cosmicDustCount: newValue })
     }
   }
+
+  // created () {
+  //   this.getGame()
+  // },
+
+  // mounted () {
+  //   if (localStorage.getItem(this.version)) {
+  //     try {
+  //       this.game = JSON.parse(localStorage.getItem(this.version))
+  //     } catch (e) {
+  //       // localStorage.removeItem('game-1.2.0')
+  //       console.log(e)
+  //     }
+  //   }
+  // },
+
+  // methods: {
+  //   getGame () {
+  //     setInterval(() => {
+  //       this.game = JSON.parse(localStorage.getItem(this.version))
+  //     }, 1000)
+  //   }
+  // }
+
 }
 </script>
