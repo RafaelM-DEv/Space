@@ -1,5 +1,12 @@
 <template>
   <q-page class="q-pa-sm page font">
+
+    <q-page-scroller position="top" :scroll-offset="100" :offset="[18, 18]" style="z-index: 110;">
+       <div class="text-white bg-red q-py-sm q-px-sm text-center text-caption" style="border-radius: 5px;"  >
+        Poeira Cósmica: {{ cosmicDustCount | formatNumber }}
+      </div>
+    </q-page-scroller>
+
     <div class="fit justify-center flex q-gutter-y-sm">
       <q-btn color="blue" label="opções" :class="isMobileOptions" class="q-mr-md" @click="toggleDialog" />
       <q-btn color="warning" label="conquistas" :class="isMobileOptions" @click="achievements = true" />
@@ -78,7 +85,7 @@
         </div>
         <div class="column items-center q-mb-md">
           <div style="font-size: 12px;">
-            Poeira Cósmica: {{ Math.round(cosmicDustCount) }}
+            Poeira Cósmica: {{ cosmicDustCount | formatNumber}}
             <q-img src="../assets/cosmic.png" style="width: 18px" class="q-mb-xs"/>
           </div>
           <div style="font-size: 10px;">Por segundo: {{ game.cosmicDustPerSecond.toFixed(1) }}/s</div>
@@ -121,7 +128,7 @@
 
         <q-separator class="q-mt-md" color="blue" size="4px" />
 
-        <div class="q-mt-md flex justify-center text-uppercase text-caption">
+        <div class="q-mt-md q-mb-md flex justify-center text-uppercase text-caption">
           Itens instalados
         </div>
         <div>
@@ -152,6 +159,9 @@
             <div class="fit">
               <q-btn v-close-popup color="warning" label="fechar" class="fit font" size="12px" />
             </div>
+            <div class="text-white bg-red-9 q-py-xs text-center text-caption fit font" style="border-radius: 5px;"  >
+              Poeira Cósmica: {{ cosmicDustCount | formatNumber }}
+            </div>
           </q-card-actions>
 
           <q-card-section class="q-ma-none q-pa-sm" >
@@ -166,7 +176,7 @@
                   </div>
                   <div class="column text-right q-mt-md">
                     <div>
-                       Preço: {{  Math.round(update.price) }}
+                       Preço: {{  update.price | formatNumber }}
                       <q-img src="../assets/cosmic.png" style="width: 10px" class="q-mb-xs"/>
                     </div>
                     <div  v-if="update.idu !== 5" >Eficiência: +{{ update.value }}</div>
@@ -194,14 +204,14 @@
         </div>
         <div v-if="game.openShop === 0" class="flex fit">
           <q-btn label="Comprar Melhorias - 50" size="10px" color="positive" class="fit" @click="open">
-              <q-avatar class="q-ml-sm q-mb-xs self-center" size="20px"><img src="../assets/cosmic.png" alt=""></q-avatar>
+              <q-avatar class="q-ml-sm q-mb-xs self-center" size="20px"><img src="../assets/cosmic.png"></q-avatar>
           </q-btn>
         </div>
 
-        <q-list v-if="game.openShop > 0" bordered separator class="starship__item-list text-white" style="font-size: 8px;">
+        <q-list v-if="game.openShop > 0" bordered class="starship__item-list text-white" style="font-size: 8px;">
           <q-item v-for="(item, key) in game.items" :key="key" class="starship__items">
             <q-item-section class="row">
-              <div v-if="game.openShop <= item.unlocked" class="fit dimmed" style="position: absolute; z-index: 100; right: 0px; padding: 0 0 20px 0;"/>
+              <div v-if="game.openShop <= item.unlocked" class="fit dimmed not-avaliable"/>
               <div class="flex justify-between">
                 <div class="row">
                   <img :src="item.img">
@@ -209,16 +219,17 @@
                 </div>
                 <div class="column text-right">
                   <div>
-                    Preço: {{ Math.round(item.price) }}
+                    Preço: {{ item.price | formatNumber }}
                     <q-img src="../assets/cosmic.png" style="width: 14px" class="q-mb-xs"/>
                   </div>
-                  <div>Eficiência: {{ item.value }}/s</div>
+                  <div>Eficiência: {{ item.value | formatNumberDec }}/s</div>
                   <div>Total: {{ item.totalEfficiency.toFixed(1) }}/s</div>
                 </div>
               </div>
-              <div class="self-end q-mb-xs">Compradas: {{ item.amount }} unidades</div>
+              <div class="self-end q-mb-xs">Compradas: {{ item.amount | formatNumber }} unidades</div>
               <div class="q-px-md starship__item-description">{{ item.description }}</div>
               <q-btn label="comprar" size="15px" push color="green" :disable="game.cosmicDust < item.price" class="q-mt-md" @click="buyItem(item)" />
+            <q-separator color="black" size="1px" class="q-mt-md" />
             </q-item-section>
           </q-item>
         </q-list>
@@ -238,53 +249,50 @@
     </q-dialog>
 
     <!-- CONTATO -->
-       <q-dialog v-model="contact">
-        <q-card class="contact">
-          <q-card-section>
-            <div class="">
-              <div class="text-center text-bold">
-                Rafael Martins
-              </div>
-              <div class="flex">
-                 <q-icon class="q-ml-xs" name="ion-logo-facebook" size="30px" />
-                 <div class="q-mt-xs q-ml-xs"><a style="text-decoration: none; color: black;" href="https://www.facebook.com/Far3ll274">facebook.com/Far3ll274</a></div>
-              </div>
-              <div class="flex q-mt-md ">
-                 <q-icon class="q-ml-xs" name="ion-logo-twitter" size="30px" />
-                 <p class="q-mt-xs q-ml-xs"><a style="text-decoration: none; color: black" href="https://twitter.com/Rafael_M274">@Rafael_M274</a></p>
-              </div>
-
-              <div class="flex">
-                 <div class="q-mt-xs q-ml-xs fit flex justify-between">
-                   <div>
-                      <q-icon name="ion-mail" size="30px" />
-                      far3ll.274@gmail.com
-                   </div>
-                   <div>
-                    <q-btn flat dense size="11px" icon="ion-copy" @click="copy()" />
-                   </div>
-                </div>
+    <q-dialog v-model="contact">
+      <q-card class="contact">
+        <q-card-section>
+          <div class="">
+            <div class="text-center text-bold">Rafael Martins</div>
+            <div class="flex">
+                <q-icon class="q-ml-xs" name="ion-logo-facebook" size="30px" />
+                <div class="q-mt-xs q-ml-xs"><a style="text-decoration: none; color: black;" href="https://www.facebook.com/Far3ll274">facebook.com/Far3ll274</a></div>
+            </div>
+            <div class="flex q-mt-md ">
+                <q-icon class="q-ml-xs" name="ion-logo-twitter" size="30px" />
+                <p class="q-mt-xs q-ml-xs"><a style="text-decoration: none; color: black" href="https://twitter.com/Rafael_M274">@Rafael_M274</a></p>
+            </div>
+            <div class="flex">
+                <div class="q-mt-xs q-ml-xs fit flex justify-between">
+                  <div>
+                    <q-icon name="ion-mail" size="30px" />
+                    far3ll.274@gmail.com
+                  </div>
+                  <div>
+                  <q-btn flat dense size="11px" icon="ion-copy" @click="copy()" />
+                  </div>
               </div>
             </div>
-          </q-card-section>
-          <q-card-actions align="right" class="text-primary">
-            <q-btn flat label="ok" v-close-popup />
-          </q-card-actions>
-        </q-card>
+          </div>
+        </q-card-section>
+        <q-card-actions align="right" class="text-primary">
+          <q-btn flat label="ok" v-close-popup />
+        </q-card-actions>
+      </q-card>
     </q-dialog>
 
     <div class="flex justify-center fit q-mt-md bg-grey-7 starshipDesktop">
-      <div class="text-black" style="font-size: 8px; text-align: center;">
+      <div class="text-black text-center" style="font-size: 8px;">
         Rafael Martins - <a target="_blank" style="text-decoration: none; color: yellow" href="https://github.com/RafaelM-DEv">https://github.com/RafaelM-DEv</a>
         Version {{ version }}
       </div>
     </div>
 
-    <div class="text-center q-mt-sm">
+    <!-- <div class="text-center q-mt-sm">
       <audio ref="music" id="bg-audio" autoplay controls loop>
         <source src="https://soundimage.org/wp-content/uploads/2018/11/Dance-of-the-Satellites_Looping.mp3">
       </audio>
-    </div>
+    </div> -->
 
   </q-page>
 </template>
@@ -292,8 +300,18 @@
 <script>
 import gsap from 'gsap'
 import { copyToClipboard } from 'quasar'
+const numeral = require('numeral')
 
 export default {
+  filters: {
+    formatNumber: function (value) {
+      return numeral(value).format('0,0') // displaying other groupings/separators is possible, look at the docs
+    },
+
+    formatNumberDec: function (value) {
+      return numeral(value).format('0,0.0') // displaying other groupings/separators is possible, look at the docs
+    }
+  },
   data () {
     return {
       achievements: false,
@@ -315,7 +333,7 @@ export default {
         click: 1,
         openShop: 0,
         starCompanyName: 'Nome da Companhia',
-        cosmicDust: 0,
+        cosmicDust: 10000,
         cosmicDustPerSecond: 0,
         itemsBuyed: [],
         achievementsList: {
@@ -519,7 +537,6 @@ export default {
   },
 
   computed: {
-
     animatedNumber () {
       return this.game.cosmicDust.toFixed(0)
     },
@@ -565,7 +582,7 @@ export default {
 
   watch: {
     animatedNumber (newValue) {
-      gsap.to(this.$data, { duration: 1.5, cosmicDustCount: newValue })
+      gsap.to(this.$data, { duration: 0.5, cosmicDustCount: newValue })
     },
 
     // CONQUISTAS
@@ -620,6 +637,7 @@ export default {
   },
 
   methods: {
+
     copy (text) {
       copyToClipboard('far3ll.274@gmail.com')
         .then(() => {
@@ -893,6 +911,10 @@ export default {
   background-image: url(https://images6.alphacoders.com/885/thumb-1920-885542.png);
   background-size: cover;
   background-color: #2A4158;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .starshipDesktop {
@@ -903,6 +925,7 @@ export default {
   border-width: 3px;
   border-style: solid;
   border-color: black;
+  // max-height: 800px;
 
   & + & {
     margin-left: 10px;
@@ -939,6 +962,7 @@ export default {
     border-style: solid;
     border-color: rgb(0, 0, 0);
     background: #556779;
+    // overflow: scroll;
 
     &--achiv {
       border-radius: 10px;
@@ -954,9 +978,14 @@ export default {
     // border-radius: 5px;
     background-color: #556779;
   }
-
-// upgrades
-
 }
+
+.not-avaliable {
+  position: absolute;
+  z-index: 100;
+  right: 0px;
+  padding: 0 0 20px 0;
+}
+// upgrades
 
 </style>
