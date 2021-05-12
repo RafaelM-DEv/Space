@@ -1,37 +1,38 @@
 <template>
   <q-page class="q-pa-sm page font">
-    <div class="fit q-mt-sm justify-center flex q-gutter-y-sm">
-      <q-btn color="warning" label="opções" :class="isMobileOptions" class="q-mr-md" @click="toggleDialog" />
-      <q-btn color="blue" label="conquistas" :class="isMobileOptions" @click="achievements = true" />
+    <div class="fit justify-center flex q-gutter-y-sm">
+      <q-btn color="blue" label="opções" :class="isMobileOptions" class="q-mr-md" @click="toggleDialog" />
+      <q-btn color="warning" label="conquistas" :class="isMobileOptions" @click="achievements = true" />
+    </div>
 
-      <q-dialog v-model="achievements" maximized>
-        <q-card class="column text-center achive font">
-          <q-card-actions>
-            <div class="col text-right text-white">
-              <q-btn icon="close" flat dense v-close-popup size="25px"/>
-            </div>
-          </q-card-actions>
-          <div class="text-white text-h6">Conquistas</div>
-          <!-- <q-card-section style="width: 300px;"> -->
-          <q-card-section class="flex justify-center">
-            <q-list v-for="(item, index) in game.achievementsList" :key="index" class="starship__item-list text-white bg-green" >
-              <q-item-section>
-                <q-icon v-if="!item.conquest" name="img:https://www.flaticon.com/premium-icon/icons/svg/1321/1321744.svg" size="80px"></q-icon>
-                <div v-if="item.conquest" class="col">
-                  <div class="text-center starship__item-list--achiv">
-                    <div class="q-ml-sm q-py-sm text-capitalize">{{ item.label }}</div>
-                    <div v-if="item.conquest" class="q-px-md starship__item-description starship__item-description--achivDescrip">{{ item.description }}</div>
-                  </div>
-                </div>
-              </q-item-section>
-            </q-list>
-          </q-card-section>
-        </q-card>
-      </q-dialog>
+    <!-- CONQUISTAS -->
+    <q-dialog v-model="achievements" maximized>
+      <q-card class="achive font">
+        <q-card-actions class="col">
+          <div class="col text-right text-white">
+            <q-btn icon="close" flat dense v-close-popup size="25px"/>
+          </div>
+        </q-card-actions>
+        <div class="col text-center text-white text-h6">Conquistas</div>
+        <q-card-section class="flex justify-center">
+          <q-list v-for="(item, index) in game.achievementsList" :key="index" class="starship__item-list text-white starship__item-list--achiv" >
+            <q-item-section>
+              <q-icon v-if="!item.conquest" name="img:https://www.flaticon.com/premium-icon/icons/svg/1321/1321744.svg" size="80px" />
+              <div v-if="item.conquest" class="starship__item-list--achiv">
+                <div class="q-ml-sm q-py-sm text-capitalize text-center">{{ item.label }}</div>
+                <div class="q-px-sm starship__item-description starship__item-description--achivDescrip">{{ item.description }}</div>
+              </div>
+            </q-item-section>
+          </q-list>
+        </q-card-section>
+      </q-card>
+    </q-dialog>
 
-      <q-dialog v-model="dialog">
+    <!-- MENU DE OPÇÕES -->
+    <q-dialog v-model="dialog">
       <q-card style="min-width: 100px;" class="flex justify-center pixel-borders--1 font">
         <q-card-section class="column q-gutter-y-md">
+          <!-- TODO criar um modal com uma msg e uma img dizendo que o jogo será resetado e sem tem certeza disso -->
           <div>
             <q-btn label="Reset" @click="resetGame" style="min-width: 200px;" color="negative" />
           </div>
@@ -41,14 +42,15 @@
         </q-card-section>
       </q-card>
     </q-dialog>
-    <!-- avisos -->
+
+    <!-- QUADRO DE UPDATE -->
     <q-dialog v-model="game.info" :maximized="isMobileMaximized">
       <q-card style="min-width: 100px;" class="flex justify-center  pixel-borders--1">
         <q-card-section class="column q-gutter-y-sm">
           <q-icon name="img:https://i.pinimg.com/originals/45/1a/27/451a27df78f84c8f671ec1e502a4fe97.gif" class="flex self-center robot"/>
           <div class="devDialog font pixel-borders--1">
-             Olá, meu nome é Rafael e primeiramente desculpa pelos dados cosmicos perdidos estou trabalhando incansavelmente para chegar a um produto final e você claro é um TESTER, TESTERS são muitos
-             importantes no desenvolvimento de um produto sabia? são eles que enchem minha caixa de emails com feedbacks que fazem o produto ser Melhor! vou deixar anotado aqui o que mudei ok!
+            Olá, meu nome é Rafael e primeiramente desculpa pelos dados cosmicos perdidos estou trabalhando incansavelmente para chegar a um produto final e você claro é um TESTER, TESTERS são muitos
+            importantes no desenvolvimento de um produto sabia? são eles que enchem minha caixa de emails com feedbacks que fazem o produto ser Melhor! vou deixar anotado aqui o que mudei ok!
           </div>
 
           <div class="font devDialog pixel-borders--1">
@@ -56,11 +58,6 @@
               Update log 05/05/2021
             </div>
             <p>Adicionado Algumas conquistas, será feito mais fique tranquilo!</p>
-            <p>Adicionado novo item "DRONE" que pode ser lançado para coletar poeira cósmica por um tempo</p>
-            <p>Adicionado update para o "DRONE"</p>
-            <p>Ajustado Preço e multiplicador de valor, agora é uma soma</p>
-            <p>Algumas melhorias no layout</p>
-            <p>Adicionado 2 efeitos sonoros para teste do usuário</p>
           </div>
         </q-card-section>
 
@@ -71,11 +68,11 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
-    </div>
 
+    <!-- STARDUST -->
     <div class="flex justify-center">
-      <!-- star-dust -->
       <div :class="isMobile">
+        <q-separator color="red" size="4px" />
         <div class="flex justify-center">
           <q-btn outline flat size="15px" :label="game.starCompanyName" @click="starCompany"/>
         </div>
@@ -84,30 +81,30 @@
             Poeira Cósmica: {{ Math.round(cosmicDustCount) }}
             <q-img src="../assets/cosmic.png" style="width: 18px" class="q-mb-xs"/>
           </div>
-          <div style="font-size: 10px;">Por segundo: {{ Math.round(game.cosmicDustPerSecond) }}</div>
+          <div style="font-size: 10px;">Por segundo: {{ game.cosmicDustPerSecond.toFixed(1) }}/s</div>
           <div class="q-mt-sm" style="font-size: 9px;">Ganho por click: {{ game.click }}</div>
         </div>
 
-        <!-- get dust -->
+        <!-- PEGAR POEIRA -->
         <div class="justify-center flex">
           <q-icon v-if="droneSend" name="img:https://cdna.artstation.com/p/assets/images/images/025/411/868/original/tomas-sousa-drone1.gif?1585708550" size="50px" style="position: absolute;"/>
           <div v-if="game.cosmicDust === 0" class="text-black q-px-sm" style="position: absolute; font-size: 10px; background-color: white; width: 290px;">Clique na nave para pegar poeira cósmica...</div>
           <q-btn icon="img:https://i.gifer.com/origin/24/2432cf5ff737ad7d1794a29d042eb02e_w200.webp" flat round @click="getDust()" size="60px"/>
         </div>
 
-        <q-separator class="q-mt-md" color="black" size="3px" />
-
-          <!-- Equipamentos -->
-        <div class="q-mt-md flex justify-center" style="font-size: 12px;">
+        <q-separator class="q-mt-md" color="orange" size="4px" />
+          <!-- TODO Criar lista com botão dropdown para exibir os itens -->
+          <!-- EQUIPAMENTOS -->
+        <div class="q-mt-md flex justify-center text-uppercase text-caption">
           Equipamentos
         </div>
 
         <!-- DRONE -->
-        <div v-if="game.installDrone" class="q-ml-sm q-mt-lg justify-between flex" style="font-size: 10px;">
+        <div v-if="game.installDrone" class="q-ml-sm q-mt-lg justify-between flex">
           <q-btn icon="img:https://www.flaticon.com/premium-icon/icons/svg/4014/4014313.svg" :class="colorDrone" :label="labelDrone" size="12px" :disable="droneSend" @click="drone()"/>
           <q-btn outline :label="timer" size="12px"/>
         </div>
-        <div v-if="game.installDrone" class="q-mt-sm q-ml-sm " style="font-size: 8px;">
+        <div v-if="game.installDrone" class="q-mt-sm q-ml-sm" style="font-size: 8px;">
           <div class="flex justify-between">
             <div>Capacidade de Coleta do drone</div>
             <div>{{ game.items.drone.launchValue }}/s</div>
@@ -122,9 +119,9 @@
           </div>
         </div>
 
-        <q-separator class="q-mt-md" color="black" size="3px" />
+        <q-separator class="q-mt-md" color="blue" size="4px" />
 
-        <div class="q-mt-md flex justify-center" style="font-size: 12px;">
+        <div class="q-mt-md flex justify-center text-uppercase text-caption">
           Itens instalados
         </div>
         <div>
@@ -147,17 +144,17 @@
         </div>
       </div>
 
-      <!-- upgrade modal list -->
+      <!-- LISTA DE UPGRADES -->
       <q-dialog v-model="upgradeDialog" :maximized="isMobileMaximized">
         <q-card class="upgradeDialog">
 
-          <q-card-actions class="flex">
+          <q-card-actions class="flex justify-center">
             <div class="fit">
               <q-btn v-close-popup color="warning" label="fechar" class="fit font" size="12px" />
             </div>
           </q-card-actions>
 
-          <q-card-section class="q-ma-none q-pa-sm">
+          <q-card-section class="q-ma-none q-pa-sm" >
             <q-list v-for="(update, index) in upgradesList" :key="index">
               <div class="devDialog font pixel-borders--1 q-my-xs upgradeDialog__item">
                 <div class="flex justify-between no-wrap">
@@ -174,7 +171,7 @@
                     </div>
                     <div  v-if="update.idu !== 5" >Eficiência: +{{ update.value }}</div>
                     <div  v-if="update.label === 'Drone Pro'">Eficiência: +{{ update.value }}</div>
-                    <!-- drone -->
+                    <!-- DRONE -->
                     <div v-if="update.label === 'Drone Sentinela'" >Coleta de Poeira: +{{ update.value }}</div>
                     <div v-if="update.label === 'Bateria de Drone'" >Coleta: +2s</div>
                     <div v-if="update.label === 'Bateria de Drone'" >Recarga: +1s</div>
@@ -185,14 +182,22 @@
               </div>
             </q-list>
           </q-card-section>
+
         </q-card>
       </q-dialog>
 
-      <!-- itens -->
+      <!-- ITENS -->
       <div :class="isMobile">
-        <div v-if="game.openShop === 0" class="flex" style="height: 100%;">
-          <q-btn label="Abrir Melhorias - Preço 50" icon="ion-planet" size="12px" color="warning" class="fit" @click="open"/>
+        <q-separator v-if="game.openShop !== 0" color="green" size="4px" />
+        <div v-if="game.openShop !== 0" class="q-mt-md q-mb-sm flex justify-center text-uppercase text-caption">
+          itens
         </div>
+        <div v-if="game.openShop === 0" class="flex fit">
+          <q-btn label="Comprar Melhorias - 50" size="10px" color="positive" class="fit" @click="open">
+              <q-avatar class="q-ml-sm q-mb-xs self-center" size="20px"><img src="../assets/cosmic.png" alt=""></q-avatar>
+          </q-btn>
+        </div>
+
         <q-list v-if="game.openShop > 0" bordered separator class="starship__item-list text-white" style="font-size: 8px;">
           <q-item v-for="(item, key) in game.items" :key="key" class="starship__items">
             <q-item-section class="row">
@@ -200,7 +205,7 @@
               <div class="flex justify-between">
                 <div class="row">
                   <img :src="item.img">
-                <div class="self-center q-ml-sm text-capitalize" style="font-size: 9px;">{{ item.label }}</div>
+                <div class="self-center q-ml-sm text-capitalize">{{ item.label }}</div>
                 </div>
                 <div class="column text-right">
                   <div>
@@ -208,21 +213,19 @@
                     <q-img src="../assets/cosmic.png" style="width: 14px" class="q-mb-xs"/>
                   </div>
                   <div>Eficiência: {{ item.value }}/s</div>
-                  <div mask="#.##">Total: {{ item.totalEfficiency.toFixed(1) }}/s</div>
+                  <div>Total: {{ item.totalEfficiency.toFixed(1) }}/s</div>
                 </div>
               </div>
               <div class="self-end q-mb-xs">Compradas: {{ item.amount }} unidades</div>
               <div class="q-px-md starship__item-description">{{ item.description }}</div>
-
               <q-btn label="comprar" size="15px" push color="green" :disable="game.cosmicDust < item.price" class="q-mt-md" @click="buyItem(item)" />
-
             </q-item-section>
           </q-item>
         </q-list>
       </div>
     </div>
 
-    <!-- company name dialog -->
+    <!-- NOME DA COMPANHIA -->
     <q-dialog v-model="setName">
         <q-card style="width: 300px">
           <q-card-section>
@@ -234,7 +237,7 @@
         </q-card>
     </q-dialog>
 
-    <!-- contato -->
+    <!-- CONTATO -->
        <q-dialog v-model="contact">
         <q-card class="contact">
           <q-card-section>
@@ -264,21 +267,23 @@
               </div>
             </div>
           </q-card-section>
-         <q-card-actions align="right" class="text-primary">
-          <q-btn flat label="ok" v-close-popup />
-        </q-card-actions>
+          <q-card-actions align="right" class="text-primary">
+            <q-btn flat label="ok" v-close-popup />
+          </q-card-actions>
         </q-card>
     </q-dialog>
 
-    <div class="flex justify-center fit q-mt-lg">
-      <div class="text-white" style="font-size: 10px; text-align: center;">
+    <div class="flex justify-center fit q-mt-md bg-grey-7 starshipDesktop">
+      <div class="text-black" style="font-size: 8px; text-align: center;">
         Rafael Martins - <a target="_blank" style="text-decoration: none; color: yellow" href="https://github.com/RafaelM-DEv">https://github.com/RafaelM-DEv</a>
-        <!-- <div class="text-center q-mt-sm">
-          <audio ref="music" id="bg-audio" autoplay controls loop>
-            <source src="http://soundimage.org/wp-content/uploads/2016/01/World-of-Automatons_Looping.mp3">
-          </audio>
-        </div> -->
+        Version {{ version }}
       </div>
+    </div>
+
+    <div class="text-center q-mt-sm">
+      <audio ref="music" id="bg-audio" autoplay controls loop>
+        <source src="https://soundimage.org/wp-content/uploads/2018/11/Dance-of-the-Satellites_Looping.mp3">
+      </audio>
     </div>
 
   </q-page>
@@ -295,8 +300,8 @@ export default {
       labelDrone: 'Enviar Drone',
       colorDrone: 'bg-green',
       droneSend: false,
-      version: '1.2.3',
-      oldVersion: '1.2.2',
+      version: '1.2.4',
+      oldVersion: '1.2.3',
       timer: 0,
       contact: false,
       upgradeDialog: false,
@@ -310,7 +315,7 @@ export default {
         click: 1,
         openShop: 0,
         starCompanyName: 'Nome da Companhia',
-        cosmicDust: 100000,
+        cosmicDust: 0,
         cosmicDustPerSecond: 0,
         itemsBuyed: [],
         achievementsList: {
@@ -335,19 +340,19 @@ export default {
           cosmicDust: {
             id: 4,
             label: '10k de Poeira não é o bastante!',
-            description: 'Conquistado apos conseguir 10k de poeira cósmica, espero que não seja o bastante pra você.',
+            description: 'Conquistado apos conseguir 10k de poeira cósmica.',
             conquest: false
           },
           cosmicDustPerSecond: {
             id: 5,
             label: 'Vamos automatizar Tudo!',
-            description: 'Comprado um scane.',
+            description: 'Chegou a 1k de Poeira cósmica por segundo',
             conquest: false
           },
           droneAchiev: {
             id: 6,
             label: 'Enfim comprei um Drone!',
-            description: 'Conquistado apos comprar o um Drone.',
+            description: 'Conquistado apos comprar um Drone.',
             conquest: false
           }
         },
@@ -478,7 +483,7 @@ export default {
             id: 5,
             label: 'drone',
             img: 'https://www.flaticon.com/premium-icon/icons/svg/4014/4014313.svg',
-            description: 'Drone pode ser lançado para coletar poeira cósmica.',
+            description: 'Equipamento / Drone pode ser lançado para coletar poeira cósmica.',
             price: 2000,
             value: 10,
             batery: 10,
@@ -524,14 +529,14 @@ export default {
     },
 
     isMobile () {
-      return this.$q.screen.lt.sm ? 'q-mt-md starship pixel-borders--1 text-white' : 'q-mt-md pixel-borders--1 starshipDesktop no-wrap text-white'
+      return this.$q.screen.lt.sm ? 'q-mt-md starship pixel-borders--1 text-white' : 'q-mt-md starshipDesktop no-wrap text-white'
     },
 
     isMobileOptions () {
       return this.$q.screen.lt.sm ? 'full-width' : ''
     },
 
-    // conquistas
+    // CONQUISTAS
     garraAmount () {
       return this.game.items.garra.amount
     },
@@ -542,6 +547,18 @@ export default {
 
     aerogelAmount () {
       return this.game.items.aerogel.amount
+    },
+
+    cosmicDustAmount () {
+      return this.game.cosmicDust
+    },
+
+    cosmicDustPerSecond () {
+      return this.game.cosmicDustPerSecond
+    },
+
+    droneAchiev () {
+      return this.game.items.drone.amount
     }
 
   },
@@ -551,57 +568,55 @@ export default {
       gsap.to(this.$data, { duration: 1.5, cosmicDustCount: newValue })
     },
 
-    // achievements
+    // CONQUISTAS
     garraAmount (newValue) {
       if (newValue === 1 && !this.game.achievementsList.AchivGarra.conquest) {
         this.game.achievementsList.AchivGarra.conquest = true
-        const som = new Audio('http://soundimage.org/wp-content/uploads/2016/04/SynthChime2.mp3')
-        som.play()
-        this.$q.notify({
-          message: 'Conquista<br><strong>Meu Primeiro Item!</strong>',
-          multiLine: true,
-          html: true,
-          timeout: 6000,
-          progress: true,
-          avatar: 'https://www.flaticon.com/br/premium-icon/icons/svg/3936/3936056.svg',
-          color: 'green'
-        })
+        this.achievementSong()
+        this.achievementNotify(this.game.achievementsList.AchivGarra.label)
       }
     },
 
     garraEfficiency (newValue) {
       if (newValue === 30 && !this.game.achievementsList.achivGarraEfficiency.conquest) {
         this.game.achievementsList.achivGarraEfficiency.conquest = true
-        const som = new Audio('http://soundimage.org/wp-content/uploads/2016/04/SynthChime2.mp3')
-        som.play()
-        this.$q.notify({
-          message: 'Conquista<br><strong>Mestre da Eficiência!</strong>',
-          multiLine: true,
-          html: true,
-          timeout: 6000,
-          progress: true,
-          avatar: 'https://www.flaticon.com/br/premium-icon/icons/svg/3936/3936056.svg',
-          color: 'green'
-        })
+        this.achievementSong()
+        this.achievementNotify(this.game.achievementsList.achivGarraEfficiency.label)
       }
     },
 
     aerogelAmount (newValue) {
       if (newValue === 20 && !this.game.achievementsList.aerogelAmount.conquest) {
         this.game.achievementsList.aerogelAmount.conquest = true
-        const som = new Audio('http://soundimage.org/wp-content/uploads/2016/04/SynthChime2.mp3')
-        som.play()
-        this.$q.notify({
-          message: 'Conquista<br><strong>Vai um Aerogel ai?</strong>',
-          multiLine: true,
-          html: true,
-          timeout: 6000,
-          progress: true,
-          avatar: 'https://www.flaticon.com/premium-icon/icons/svg/3049/3049596.svg',
-          color: 'green'
-        })
+        this.achievementSong()
+        this.achievementNotify(this.game.achievementsList.aerogelAmount.label)
+      }
+    },
+
+    cosmicDustAmount (newValue) {
+      if (newValue > 10000 && !this.game.achievementsList.cosmicDust.conquest) {
+        this.game.achievementsList.cosmicDust.conquest = true
+        this.achievementSong()
+        this.achievementNotify(this.game.achievementsList.cosmicDust.label)
+      }
+    },
+
+    cosmicDustPerSecond (newValue) {
+      if (newValue > 1000 && !this.game.achievementsList.cosmicDustPerSecond.conquest) {
+        this.game.achievementsList.cosmicDustPerSecond.conquest = true
+        this.achievementSong()
+        this.achievementNotify(this.game.achievementsList.cosmicDustPerSecond.label)
+      }
+    },
+
+    droneAchiev (newValue) {
+      if (newValue >= 1 && !this.game.achievementsList.droneAchiev.conquest) {
+        this.game.achievementsList.droneAchiev.conquest = true
+        this.achievementSong()
+        this.achievementNotify(this.game.achievementsList.droneAchiev.label)
       }
     }
+
   },
 
   methods: {
@@ -617,6 +632,24 @@ export default {
         })
     },
 
+    achievementSong () {
+      const som = new Audio('http://soundimage.org/wp-content/uploads/2016/04/SynthChime2.mp3')
+      som.play()
+    },
+
+    achievementNotify (text) {
+      this.$q.notify({
+        message: `Conquista<br><strong>${text}</strong>`,
+        multiLine: true,
+        html: true,
+        timeout: 6000,
+        progress: true,
+        avatar: 'https://www.flaticon.com/premium-icon/icons/svg/3113/3113054.svg',
+        color: 'warning'
+      })
+    },
+
+    // TODO DRONE ESTÁ RESETANDO QUANDO A PAGINA RECARREGA
     drone () {
       this.labelDrone = 'Enviado...'
       this.colorDrone = 'bg-blue'
@@ -633,7 +666,7 @@ export default {
           clearInterval(timeCont)
           this.game.cosmicDustPerSecond -= this.game.items.drone.launchValue
 
-          // Recarregando
+          // RECARREGANDO
           this.labelDrone = 'Recarregando'
           this.colorDrone = 'bg-orange text-bold'
           this.droneSend = true
@@ -642,7 +675,7 @@ export default {
           const timerRecharger = setInterval(() => {
             this.timer -= 1
 
-            // disponivel
+            // DISPONIVEL
             if (this.timer === 0) {
               clearInterval(timerRecharger)
               this.labelDrone = 'Enviar Drone'
@@ -655,6 +688,15 @@ export default {
     },
 
     addInstallCountItem (model) {
+      this.$q.notify({
+        message: '<strong>Upgrade comprado!</strong>',
+        multiLine: true,
+        html: true,
+        timeout: 1000,
+        progress: true,
+        icon: 'img:https://www.flaticon.com/premium-icon/icons/svg/4680/4680441.svg',
+        color: 'blue'
+      })
       this.game.items[model.uplink].ups += 1
     },
 
@@ -673,29 +715,21 @@ export default {
             }
             if (model.label === 'Garra Pro') {
               this.game.cosmicDust -= model.price
-              model.price += model.price * 0.5
+              model.price += model.price * 0.2
 
               this.game.items[model.uplink].value += model.value
 
               this.addInstallCountItem(model)
             }
           }
-          this.$q.notify({
-            message: '<strong>upgrade comprado</strong>',
-            multiLine: true,
-            html: true,
-            timeout: 6000,
-            progress: true,
-            icon: 'img:https://www.flaticon.com/premium-icon/icons/svg/4680/4680441.svg',
-            color: 'blue'
-          })
+
           break
         case 2:
           if (this.game.cosmicDust >= model.price) {
             this.game.cosmicDust -= model.price
 
             this.game.items[model.uplink].value += model.value
-            model.price += model.price * 0.1
+            model.price += model.price * 0.2
 
             this.addInstallCountItem(model)
           }
@@ -706,7 +740,7 @@ export default {
 
             this.game.items[model.uplink].value += model.value
 
-            model.price += model.price * 0.1
+            model.price += model.price * 0.2
 
             this.addInstallCountItem(model)
           }
@@ -717,7 +751,7 @@ export default {
 
             this.game.items[model.uplink].value += model.value
 
-            model.price += model.price * 0.1
+            model.price += model.price * 0.2
 
             this.addInstallCountItem(model)
           }
@@ -727,16 +761,16 @@ export default {
             this.game.cosmicDust -= model.price
             if (model.label === 'Drone Pro') {
               this.game.items[model.uplink].value += model.value
-              model.price += model.price * 0.1
+              model.price += model.price * 0.2
             }
             if (model.label === 'Drone Sentinela') {
               this.game.items.drone.launchValue += model.value
-              model.price += model.price * 0.1
+              model.price += model.price * 0.2
             }
             if (model.label === 'Bateria de Drone') {
               this.game.items.drone.batery += model.value
               this.game.items.drone.bateryRecover += 1
-              model.price += model.price * 0.1
+              model.price += model.price * 0.2
             }
             this.addInstallCountItem(model)
           }
@@ -758,7 +792,7 @@ export default {
         this.game.cosmicDust -= model.price // debita o valor
         this.game.cosmicDustPerSecond += model.value // adiciona o multiplicador do item
 
-        model.price += model.amount
+        model.price += model.price * 0.1
         model.totalEfficiency += model.value
 
         if (model.amount === 0) {
@@ -833,6 +867,7 @@ export default {
 .achive {
   background-image: url('https://i.pinimg.com/564x/b1/bd/c1/b1bdc1ae539dcbd1a7c33cef3e5f2d9a.jpg');
   font-size: 9px;
+  width: 100px;
 }
 
 .contact {
@@ -855,6 +890,8 @@ export default {
 }
 
 .page {
+  background-image: url(https://images6.alphacoders.com/885/thumb-1920-885542.png);
+  background-size: cover;
   background-color: #2A4158;
 }
 
@@ -862,14 +899,19 @@ export default {
   background-image: url('https://gifimage.net/wp-content/uploads/2018/11/pixel-gif-stars-1.gif');
   width: 400px;
   background-color: #556779;
+  border-radius: 6px;
+  border-width: 3px;
+  border-style: solid;
+  border-color: black;
 
-  & + &{
+  & + & {
     margin-left: 10px;
   }
 }
 
 .starship {
   width: 100%;
+  margin: 10px 0 0 0;
   background-image: url('https://gifimage.net/wp-content/uploads/2018/11/pixel-gif-stars-1.gif');
   // background-color: #556779;
 
@@ -877,9 +919,11 @@ export default {
     text-align: center;
     color: $dark;
     background: #e1e2e4;
-    border-radius: 3px;
+    border-radius: 0.5rem;
+
     &--achivDescrip {
-      max-width: 200px;
+      border-radius: 10px;
+      width: 300px;
     }
   }
 
@@ -897,14 +941,17 @@ export default {
     background: #556779;
 
     &--achiv {
-      border-top-left-radius: 0.5rem;
-      border-top-right-radius: 0.5rem;
-      background: $positive;
+      border-radius: 10px;
+      padding: 2px 2px 2px 2px;
+      text-shadow: 2px 2px 2px rgba(0,0,0,0.24);
+      // border-top-left-radius: 0.5rem;
+      // border-top-right-radius: 0.5rem;
+      background: $warning;
     }
   }
 
   &__item-update {
-    border-radius: 5px;
+    // border-radius: 5px;
     background-color: #556779;
   }
 
