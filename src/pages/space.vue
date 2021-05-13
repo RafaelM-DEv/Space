@@ -352,7 +352,7 @@ export default {
         click: 1,
         openShop: 0,
         starCompanyName: 'Nome da Companhia',
-        cosmicDust: 10000,
+        cosmicDust: 0,
         cosmicDustPerSecond: 0,
         itemsBuyed: [],
         achievementsList: {
