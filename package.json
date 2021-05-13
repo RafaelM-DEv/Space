@@ -2,7 +2,7 @@
   "name": "space-clicker",
   "version": "0.0.1",
   "description": "Um jogo com o objetivo de conseguir acumular poeira cosmica para desenvolvimento de tecnologias espaciais! ",
-  "productName": "Quasar App",
+  "productName": "Space Clicker",
   "author": "Rafael Martins de Castro <42079080+Far3llProject@users.noreply.github.com>",
   "private": true,
   "scripts": {
@@ -16,11 +16,14 @@
     "axios": "^0.21.1",
     "core-js": "^3.6.5",
     "gsap": "^3.6.1",
+    "numeral": "^2.0.6",
     "pixel-borders": "^1.1.4",
     "push-dir": "^0.4.1",
     "quasar": "^1.0.0",
     "vue-i18n": "^8.0.0",
-    "vue-reactive-storage": "git+https://github.com/ropbla9/vue-reactive-storage.git"
+    "vue-observe-visibility": "^1.0.0",
+    "vue-reactive-storage": "git+https://github.com/ropbla9/vue-reactive-storage.git",
+    "vue-waypoint": "^3.5.2"
   },
   "devDependencies": {
     "@quasar/app": "^2.0.0",
