@@ -9,7 +9,7 @@
 
     <div class="fit justify-center flex q-gutter-y-sm">
       <q-btn color="blue" label="opções" :class="isMobileOptions" class="q-mr-md" @click="toggleDialog" />
-      <q-btn color="warning" label="conquistas" :class="isMobileOptions" @click="achievements = true" />
+      <q-btn color="warning" label="conquistas" :class="isMobileOptions" class="q-mr-md" @click="achievementsCheck" />
     </div>
 
     <!-- CONQUISTAS -->
@@ -44,8 +44,12 @@
             <q-btn label="Reset" @click="resetGame" style="min-width: 200px;" color="negative" />
           </div>
           <div>
-            <q-btn label="contato" style="min-width: 200px;" @click="contact = true"/>
+            <q-btn label="contato" class="bg-blue text-white" style="min-width: 200px;" @click="contactCard"/>
           </div>
+          <div>
+            <q-btn class="bg-orange-6 fit" color="white" label="Música" :icon="iconAudio" @click="audioToggle"/>
+          </div>
+         <!-- TODO criar controle de volume -->
         </q-card-section>
       </q-card>
     </q-dialog>
@@ -55,16 +59,20 @@
       <q-card style="min-width: 100px;" class="flex justify-center  pixel-borders--1">
         <q-card-section class="column q-gutter-y-sm">
           <q-icon name="img:https://i.pinimg.com/originals/45/1a/27/451a27df78f84c8f671ec1e502a4fe97.gif" class="flex self-center robot"/>
-          <div class="devDialog font pixel-borders--1">
+          <!-- <div class="devDialog font pixel-borders--1">
             Olá, meu nome é Rafael e primeiramente desculpa pelos dados cosmicos perdidos estou trabalhando incansavelmente para chegar a um produto final e você claro é um TESTER, TESTERS são muitos
-            importantes no desenvolvimento de um produto sabia? são eles que enchem minha caixa de emails com feedbacks que fazem o produto ser Melhor! vou deixar anotado aqui o que mudei ok!
-          </div>
+            importantes no desenvolvimento de um produto sabia? são eles que enchem minha caixa de emails com feedbacks que fazem o Jogo ser bem Melhor! Vou deixar anotado aqui o que mudei dessa vez ok!
+          </div> -->
 
           <div class="font devDialog pixel-borders--1">
             <div class="text-center q-mb-sm text-bold">
-              Update log 05/05/2021
+              Update log 13/05/2021
             </div>
-            <p>Adicionado Algumas conquistas, será feito mais fique tranquilo!</p>
+            <p>>Conquistas Completas, Todas estão disponíveis no jogo!</p>
+            <p>>Resolvido Bug do Drone quando a Página Recarrega.</p>
+            <p>>Os equipamentos agora mostra os status atuais</p>
+            <p>>Foi adicionado um banner quando o contador de Poeira Cosmica não fica visivel, mostrando a quantidade atual.</p>
+            <p>>Ajustes nos upgrades</p>
           </div>
         </q-card-section>
 
@@ -94,7 +102,7 @@
 
         <!-- PEGAR POEIRA -->
         <div class="justify-center flex">
-          <q-icon v-if="droneSend" name="img:https://cdna.artstation.com/p/assets/images/images/025/411/868/original/tomas-sousa-drone1.gif?1585708550" size="50px" style="position: absolute;"/>
+          <q-icon v-if="game.droneFunction.droneSend" name="img:https://cdna.artstation.com/p/assets/images/images/025/411/868/original/tomas-sousa-drone1.gif?1585708550" size="50px" style="position: absolute;"/>
           <div v-if="game.cosmicDust === 0" class="text-black q-px-sm" style="position: absolute; font-size: 10px; background-color: white; width: 290px;">Clique na nave para pegar poeira cósmica...</div>
           <q-btn icon="img:https://i.gifer.com/origin/24/2432cf5ff737ad7d1794a29d042eb02e_w200.webp" flat round @click="getDust()" size="60px"/>
         </div>
@@ -108,8 +116,8 @@
 
         <!-- DRONE -->
         <div v-if="game.installDrone" class="q-ml-sm q-mt-lg justify-between flex">
-          <q-btn icon="img:https://www.flaticon.com/premium-icon/icons/svg/4014/4014313.svg" :class="colorDrone" :label="labelDrone" size="12px" :disable="droneSend" @click="drone()"/>
-          <q-btn outline :label="timer" size="12px"/>
+          <q-btn icon="img:https://www.flaticon.com/premium-icon/icons/svg/4014/4014313.svg" :class="game.droneFunction.colorDrone" :label="game.droneFunction.labelDrone" size="12px" :disable="game.droneFunction.droneSend" @click="drone()"/>
+          <q-btn outline :label="game.droneFunction.droneTimer" size="12px"/>
         </div>
         <div v-if="game.installDrone" class="q-mt-sm q-ml-sm" style="font-size: 8px;">
           <div class="flex justify-between">
@@ -288,11 +296,18 @@
       </div>
     </div>
 
-    <!-- <div class="text-center q-mt-sm">
-      <audio ref="music" id="bg-audio" autoplay controls loop>
-        <source src="https://soundimage.org/wp-content/uploads/2018/11/Dance-of-the-Satellites_Looping.mp3">
+      <!-- SFX / MUSIC  -->
+    <template class="text-center q-mt-sm">
+      <audio ref="buyItem">
+        <source src="../assets/buy.mp3">
       </audio>
-    </div> -->
+    </template>
+
+    <template class="text-center q-mt-sm">
+      <audio ref="music" id="bg-audio" autoplay loop>
+        <source src="http://soundimage.org/wp-content/uploads/2016/03/Escape_Looping.mp3">
+      </audio>
+    </template>
 
   </q-page>
 </template>
@@ -314,13 +329,11 @@ export default {
   },
   data () {
     return {
+      volume: 1,
+      iconAudio: 'volume_up',
       achievements: false,
-      labelDrone: 'Enviar Drone',
-      colorDrone: 'bg-green',
-      droneSend: false,
       version: '1.2.4',
       oldVersion: '1.2.3',
-      timer: 0,
       contact: false,
       upgradeDialog: false,
       dialog: false,
@@ -328,6 +341,12 @@ export default {
       cosmicDustCount: 0,
       upgradesList: [],
       game: {
+        droneFunction: {
+          droneTimer: 0,
+          labelDrone: 'Enviar Drone',
+          colorDrone: 'bg-green',
+          droneSend: false
+        },
         installDrone: false,
         info: true,
         click: 1,
@@ -455,7 +474,7 @@ export default {
             img: 'https://www.flaticon.com/br/premium-icon/icons/svg/3936/3936056.svg',
             description: 'Ferramenta para ajudar na coleta de detritos.',
             price: 50,
-            value: 0.1,
+            value: 0.5,
             amount: 0,
             unlocked: 0,
             ups: 0,
@@ -510,7 +529,8 @@ export default {
             amount: 0,
             unlocked: 20,
             ups: 0,
-            totalEfficiency: 0
+            totalEfficiency: 0,
+            status: 'Pronto'
           }
         }
       }
@@ -534,9 +554,11 @@ export default {
       localStorage.removeItem(this.oldVersion)
       this.saveGame()
     }
+    this.recovery()
   },
 
   computed: {
+
     animatedNumber () {
       return this.game.cosmicDust.toFixed(0)
     },
@@ -581,6 +603,11 @@ export default {
   },
 
   watch: {
+    // recovery (oldValue, newValue) {
+    //   console.log(oldValue)
+    //   console.log(newValue)
+    // },
+
     animatedNumber (newValue) {
       gsap.to(this.$data, { duration: 0.5, cosmicDustCount: newValue })
     },
@@ -637,6 +664,27 @@ export default {
   },
 
   methods: {
+    contactCard () {
+      this.contact = true
+      this.$refs.buyItem.play()
+    },
+
+    audioToggle () {
+      if (this.iconAudio === 'volume_off') {
+        this.$refs.music.play()
+
+        this.iconAudio = 'volume_up'
+      } else {
+        this.$refs.music.pause()
+
+        this.iconAudio = 'volume_off'
+      }
+    },
+
+    recovery () {
+      if (this.game.droneFunction.droneSend || !this.game.droneFunction.labelDrone === 'Enviar Drone') { this.droneWorking() }
+      return console.log('resume...')
+    },
 
     copy (text) {
       copyToClipboard('far3ll.274@gmail.com')
@@ -669,40 +717,59 @@ export default {
 
     // TODO DRONE ESTÁ RESETANDO QUANDO A PAGINA RECARREGA
     drone () {
-      this.labelDrone = 'Enviado...'
-      this.colorDrone = 'bg-blue'
-      this.droneSend = true
+      this.game.droneFunction.labelDrone = 'Enviado...'
+      this.game.droneFunction.colorDrone = 'bg-blue'
+      this.game.droneFunction.droneSend = true
       this.game.cosmicDustPerSecond += this.game.items.drone.launchValue
-      this.timer = this.game.items.drone.batery // tempo lançado
+      this.game.droneFunction.droneTimer = this.game.items.drone.batery // tempo lançado
+      this.game.items.drone.status = 'working'
       const som = new Audio('http://soundimage.org/wp-content/uploads/2016/04/PowerUp28.mp3')
       som.play()
 
-      const timeCont = setInterval(() => {
-        this.timer -= 1
+      this.droneWorking()
+    },
 
-        if (this.timer === 0) {
-          clearInterval(timeCont)
-          this.game.cosmicDustPerSecond -= this.game.items.drone.launchValue
+    droneWorking () {
+      if (this.game.items.drone.status === 'working') {
+        const timeCont = setInterval(() => {
+          this.game.droneFunction.droneTimer -= 1
 
-          // RECARREGANDO
-          this.labelDrone = 'Recarregando'
-          this.colorDrone = 'bg-orange text-bold'
-          this.droneSend = true
-          this.timer = this.game.items.drone.bateryRecover // tempo recarregando
+          if (this.game.droneFunction.droneTimer === 0) {
+            clearInterval(timeCont)
+            this.game.cosmicDustPerSecond -= this.game.items.drone.launchValue
+            this.game.items.drone.status = 'recharging'
+            // RECARREGANDO
+            this.game.droneFunction.labelDrone = 'Recarregando'
+            this.game.droneFunction.colorDrone = 'bg-orange text-bold'
+            this.game.droneFunction.droneTimer = this.game.items.drone.bateryRecover // tempo recarregando
+            const timerRecharger = setInterval(() => {
+              this.game.droneFunction.droneTimer -= 1
 
-          const timerRecharger = setInterval(() => {
-            this.timer -= 1
+              // DISPONIVEL
+              if (this.game.droneFunction.droneTimer === 0) {
+                clearInterval(timerRecharger)
+                this.game.droneFunction.labelDrone = 'Enviar Drone'
+                this.game.droneFunction.colorDrone = 'bg-green'
+                this.game.droneFunction.droneSend = false
+              }
+            }, 1000)
+          }
+        }, 1000)
+      }
 
-            // DISPONIVEL
-            if (this.timer === 0) {
-              clearInterval(timerRecharger)
-              this.labelDrone = 'Enviar Drone'
-              this.colorDrone = 'bg-green'
-              this.droneSend = false
-            }
-          }, 1000)
-        }
-      }, 1000)
+      if (this.game.items.drone.status === 'recharging') {
+        const timerRecharger = setInterval(() => {
+          this.game.droneFunction.droneTimer -= 1
+
+          // DISPONIVEL
+          if (this.game.droneFunction.droneTimer === 0) {
+            clearInterval(timerRecharger)
+            this.game.droneFunction.labelDrone = 'Enviar Drone'
+            this.game.droneFunction.colorDrone = 'bg-green'
+            this.game.droneFunction.droneSend = false
+          }
+        }, 1000)
+      }
     },
 
     addInstallCountItem (model) {
@@ -719,6 +786,7 @@ export default {
     },
 
     buyUpgrade (model) {
+      this.$refs.buyItem.play()
       switch (model.idu) {
         case 1:
           if (this.game.cosmicDust >= model.price) {
@@ -798,15 +866,22 @@ export default {
 
     upgrade (model) {
       this.upgradeDialog = true
+      this.$refs.buyItem.play()
       this.upgradesList = this.game.upgrades.filter(item => item.idu === model.id)
     },
 
     toggleDialog () {
+      this.$refs.buyItem.play()
       this.dialog = !this.dialog
+    },
+    achievementsCheck () {
+      this.$refs.buyItem.play()
+      this.achievements = true
     },
 
     buyItem (model) {
       if (this.game.cosmicDust >= model.price) {
+        this.$refs.buyItem.play()
         this.game.cosmicDust -= model.price // debita o valor
         this.game.cosmicDustPerSecond += model.value // adiciona o multiplicador do item
 
@@ -826,6 +901,7 @@ export default {
     },
 
     open () {
+      this.$refs.buyItem.play()
       if (this.game.cosmicDust >= 50) {
         this.game.cosmicDust -= 50
         this.game.openShop = 1
