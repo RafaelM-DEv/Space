@@ -46,7 +46,7 @@ module.exports = function (/* ctx */) {
 
     // Full list of options: https://v1.quasar.dev/quasar-cli/quasar-conf-js#Property%3A-build
     build: {
-      vueRouterMode: 'hash', // available values: 'hash', 'history'
+      vueRouterMode: 'history', // available values: 'hash', 'history'
 
       // transpile: false,
 
@@ -98,7 +98,10 @@ module.exports = function (/* ctx */) {
       // directives: [],
 
       // Quasar plugins
-      plugins: []
+      plugins: [
+        'Meta',
+        'Notify'
+      ]
     },
 
     // animations: 'all', // --- includes all animations
@@ -115,8 +118,8 @@ module.exports = function (/* ctx */) {
       workboxPluginMode: 'GenerateSW', // 'GenerateSW' or 'InjectManifest'
       workboxOptions: {}, // only for GenerateSW
       manifest: {
-        name: 'Quasar App',
-        short_name: 'Quasar App',
+        name: 'Space Clicker',
+        short_name: 'Space Clicker',
         description: 'Um jogo com o objetivo de conseguir acumular poeira cosmica para desenvolvimento de tecnologias espaciais! ',
         display: 'standalone',
         orientation: 'portrait',
